@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.smart.mapper.UserAddressMapper">
+
+    <resultMap id="UserAddressResult" type="UserAddress">
+        <result property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="receiveName" column="receive_name" />
+        <result property="receivePhone" column="receive_phone" />
+        <result  property="receiveProvinceCityArea" column="receive_province_city_area" />
+        <result property="receiveAddress" column="receive_address" />
+        <result property="doorNumber" column="door_number" />
+        <result property="isDefault" column="is_default" />
+        <result property="delFlag" column="del_flag" />
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectAddressVo">
+        select id,user_id,receive_name,receive_phone,receive_province_city_area,receive_address,door_number,is_default,create_time,update_time from tb_user_address
+    </sql>
+
+<!--    根据主键查询用户地址-->
+    <select id="selectAddressById" resultMap="UserAddressResult" parameterType="Long">
+        <include refid="selectAddressVo" />
+        where id = #{id}
+    </select>
+
+<!--    查询用户的地址详情-->
+    <select id="selectAddressList" resultMap="UserAddressResult" parameterType="UserAddress">
+        <include refid="selectAddressVo" />
+        <where>
+            <if test="userId != null and userId != ''">and user_id = #{userId}</if>
+            <if test="receiveName != null and receiveName != ''">and receive_name = #{receiveName}</if>
+            <if test="receivePhone != null and receivePhone != ''"> and receive_phone = #{receivePhone}</if>
+            <if test="receiveProvinceCityArea != null and receiveProvinceCityArea != ''">and receive_province_city_area like concat('%',#{receiveProvinceCityArea},'%')</if>
+            <if test="receiveAddress != null and receiveAddress != ''"> and receive_address like concat('%',#{receiveAddress},'%')</if>
+            <if test="doorNumber != null and doorNumber != ''"> and door_number = #{doorNumber}</if>
+            <if test="isDefault != null and isDefault != ''"> and is_default = #{isDefault}</if>
+            <if test="delFlag != null and delFlag != ''"> and del_flag = #{delFlag}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+<!--    新增用户地址-->
+    <insert id="insertAddress" parameterType="UserAddress">
+        insert into tb_user_address
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="receiveName != null">receive_name,</if>
+            <if test="receivePhone != null">receive_phone,</if>
+            <if test="receiveProvinceCityArea != null">receive_province_city_area,</if>
+            <if test="receiveAddress != null">receive_address,</if>
+            <if test="doorNumber != null">door_number,</if>
+            <if test="isDefault != null">is_default,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="receiveName != null">#{receiveName},</if>
+            <if test="receivePhone != null">#{receivePhone},</if>
+            <if test="receiveProvinceCityArea != null">#{receiveProvinceCityArea},</if>
+            <if test="receiveAddress != null">#{receiveAddress},</if>
+            <if test="doorNumber != null">#{doorNumber},</if>
+            <if test="isDefault != null">#{isDefault},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+
+<!--    更新用户数据-->
+    <update id="updateAddress" parameterType="UserAddress">
+        update tb_user_address
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="receiveName != null and receiveName != ''">receive_name = #{receiveName},</if>
+            <if test="receivePhone != null and receivePhone != ''">receive_phone = #{receivePhone},</if>
+            <if test="receiveProvinceCityArea != null and receiveProvinceCityArea != ''">receive_province_city_area = #{receiveProvinceCityArea},</if>
+            <if test="receiveAddress != null and receiveAddress != ''"> receive_address = #{receiveAddress},</if>
+            <if test="doorNumber != null">door_number = #{doorNumber},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+<!--    修改用户默认地址-->
+    <update id="updateDefaultById">
+        update tb_user_address set is_default = 2,update_time = sysdate() where id = #{id}
+    </update>
+<!--    修改用户所有地址为非默认-->
+    <update id="updateNoDefaultByOpenId">
+        update tb_user_address set is_default = 1,update_time = sysdate() where user_id = #{userId}
+    </update>
+</mapper>

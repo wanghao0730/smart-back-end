@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.smart.mapper.LeagueMapper">
+    
+    <resultMap type="League" id="LeagueResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="linkman"    column="linkman"    />
+        <result property="president"    column="president"    />
+        <result property="concat"    column="concat"    />
+        <result property="email"    column="email"    />
+        <result property="description"    column="description"    />
+        <result property="cover"    column="cover"    />
+        <result property="detail"    column="detail"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectLeagueVo">
+        select id, type, linkman, president, concat, email, description, cover, detail, create_by, create_time, update_by, update_time, remark from tb_league_info
+    </sql>
+
+    <select id="selectLeagueList" parameterType="League" resultMap="LeagueResult">
+        <include refid="selectLeagueVo"/>
+        <where>  
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="linkman != null  and linkman != ''"> and linkman = #{linkman}</if>
+            <if test="president != null  and president != ''"> and president = #{president}</if>
+            <if test="concat != null  and concat != ''"> and concat = #{concat}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="cover != null  and cover != ''"> and cover = #{cover}</if>
+            <if test="detail != null  and detail != ''"> and detail = #{detail}</if>
+        </where>
+    </select>
+    
+    <select id="selectLeagueById" parameterType="Long" resultMap="LeagueResult">
+        <include refid="selectLeagueVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertLeague" parameterType="League">
+        insert into tb_league_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="type != null and type != ''">type,</if>
+            <if test="linkman != null and linkman != ''">linkman,</if>
+            <if test="president != null and president != ''">president,</if>
+            <if test="concat != null and concat != ''">concat,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="description != null and description != ''">description,</if>
+            <if test="cover != null and cover != ''">cover,</if>
+            <if test="detail != null and detail != ''">detail,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="linkman != null and linkman != ''">#{linkman},</if>
+            <if test="president != null and president != ''">#{president},</if>
+            <if test="concat != null and concat != ''">#{concat},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="description != null and description != ''">#{description},</if>
+            <if test="cover != null and cover != ''">#{cover},</if>
+            <if test="detail != null and detail != ''">#{detail},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateLeague" parameterType="League">
+        update tb_league_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="linkman != null and linkman != ''">linkman = #{linkman},</if>
+            <if test="president != null and president != ''">president = #{president},</if>
+            <if test="concat != null and concat != ''">concat = #{concat},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="cover != null and cover != ''">cover = #{cover},</if>
+            <if test="detail != null and detail != ''">detail = #{detail},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteLeagueById" parameterType="Long">
+        delete from tb_league_info where id = #{id}
+    </delete>
+
+    <delete id="deleteLeagueByIds" parameterType="String">
+        delete from tb_league_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

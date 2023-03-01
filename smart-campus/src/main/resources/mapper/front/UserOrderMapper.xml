@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.smart.mapper.UserOrderMapper">
+
+<!--    订单resultmap-->
+    <resultMap type="UserOrder" id="UserOrderResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="userId"    column="user_id"    />
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar" />
+        <result property="orderId"    column="order_id"    />
+        <result property="receiveName"    column="receive_name"    />
+        <result property="receivePhone"    column="receive_phone"    />
+        <result property="receiveProvince"    column="receive_province"    />
+        <result property="receiveAddress"    column="receive_address"    />
+        <result property="deliveryAddress"    column="delivery_address"    />
+        <result property="orderAmount"    column="order_amount"    />
+        <result property="tipFee"    column="tip_fee"    />
+        <result property="payMode"    column="pay_mode"    />
+        <result property="orderDetailName"    column="order_detail_name"    />
+        <result property="orderRemark"    column="order_remark"    />
+        <result property="finishedTime"    column="finished_time"    />
+        <result property="appointmentTime"    column="appointment_time"    />
+        <result property="orderDetailCode"    column="order_detail_code"    />
+        <result property="orderStep"    column="order_step"    />
+        <result property="cancelRemark"    column="cancel_remark"    />
+        <result property="cancelTime"    column="cancel_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+<!--    整合-->
+    <resultMap id="UserOrderTbUserDeliverResult" type="UserOrder" extends="UserOrderResult">
+<!--        <collection property="tbUserDeliverList" notNullColumn="sub_id" javaType="java.util.List" resultMap="TbUserDeliverResult" />-->
+        <association property="userDeliver" notNullColumn="sub_id" resultMap="UserDeliverResult"/>
+    </resultMap>
+
+<!--    派送订单resultmap-->
+    <resultMap type="UserDeliver" id="UserDeliverResult">
+        <result property="id"    column="sub_id"    />
+        <result property="nickname"    column="sub_nickname"    />
+        <result property="avatar"    column="sub_avatar"    />
+        <result property="orderId"    column="sub_order_id"    />
+        <result property="distributorId"    column="sub_distributor_id"    />
+        <result property="distributorName"    column="sub_distributor_name"    />
+        <result property="distributorPhone"    column="sub_distributor_phone"    />
+        <result property="cancelRemark"    column="sub_cancel_remark"    />
+        <result property="cancelTime"    column="sub_cancel_time"    />
+        <result property="orderStep"    column="sub_order_step"    />
+        <result property="createTime"    column="sub_create_time"    />
+    </resultMap>
+<!--    查询订单order没有外联-->
+    <sql id="selectUserOrderVo">
+        select id, type, user_id,nickname,avatar,order_id, receive_name, receive_phone, receive_province, receive_address, delivery_address, order_amount, tip_fee, pay_mode, order_detail_name, order_remark, finished_time, appointment_time, order_detail_code, order_step, cancel_remark, cancel_time,create_time,update_time from tb_user_order
+    </sql>
+
+    <select id="selectUserOrderList" parameterType="UserOrder" resultMap="UserOrderResult">
+        <include refid="selectUserOrderVo"/>
+        <where>  
+            <if test="type != null "> and type = #{type}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+             <if test="nickname != null and nickname != ''">and nickname = #{nickname}</if>
+            <if test="avatar != null and avatar != ''">and avatar = #{avatar}</if>
+            <if test="receiveName != null  and receiveName != ''"> and receive_name like concat('%', #{receiveName}, '%')</if>
+            <if test="receivePhone != null  and receivePhone != ''"> and receive_phone = #{receivePhone}</if>
+            <if test="receiveProvince != null  and receiveProvince != ''"> and receive_province = #{receiveProvince}</if>
+            <if test="receiveAddress != null  and receiveAddress != ''"> and receive_address = #{receiveAddress}</if>
+            <if test="deliveryAddress != null  and deliveryAddress != ''"> and delivery_address = #{deliveryAddress}</if>
+            <if test="orderAmount != null "> and order_amount = #{orderAmount}</if>
+            <if test="tipFee != null "> and tip_fee = #{tipFee}</if>
+            <if test="payMode != null "> and pay_mode = #{payMode}</if>
+            <if test="orderDetailName != null  and orderDetailName != ''"> and order_detail_name like concat('%', #{orderDetailName}, '%')</if>
+            <if test="orderRemark != null  and orderRemark != ''"> and order_remark = #{orderRemark}</if>
+            <if test="finishedTime != null "> and finished_time = #{finishedTime}</if>
+            <if test="appointmentTime != null "> and appointment_time = #{appointmentTime}</if>
+            <if test="orderDetailCode != null  and orderDetailCode != ''"> and order_detail_code = #{orderDetailCode}</if>
+            <if test="orderStep != null "> and order_step = #{orderStep}</if>
+            <if test="cancelRemark != null  and cancelRemark != ''"> and cancel_remark = #{cancelRemark}</if>
+            <if test="cancelTime != null "> and cancel_time = #{cancelTime}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+<!--    包含关联关系的查询 根据用户id查询-->
+    <select id="selectOrderDeliveryList" parameterType="UserOrder" resultMap="UserOrderTbUserDeliverResult">
+        select a.id, a.type, a.user_id, a.order_id, a.nickname, a.avatar, a.receive_name, a.receive_phone, a.receive_province, a.receive_address, a.delivery_address, a.order_amount, a.tip_fee, a.pay_mode, a.order_detail_name, a.order_remark, a.finished_time, a.appointment_time, a.order_detail_code, a.order_step, a.cancel_remark, a.cancel_time, a.create_time, a.update_time,b.id as sub_id, b.nickname as sub_nickname, b.avatar as sub_avatar, b.order_id as sub_order_id, b.distributor_id as sub_distributor_id, b.distributor_name as sub_distributor_name, b.distributor_phone as sub_distributor_phone, b.cancel_remark as sub_cancel_remark, b.cancel_time as sub_cancel_time, b.order_step as sub_order_step, b.create_time as sub_create_time
+        from tb_user_order a
+        left join tb_user_deliver b on b.order_id = a.order_id
+        <where>
+            <if test="type != null">
+                and a.type = #{type}
+            </if>
+            <if test="orderStep != null">
+                and a.order_step = #{orderStep}
+            </if>
+            <if test="userId != null">
+                and a.user_id = #{userId}
+            </if>
+        </where>
+        order by a.create_time desc
+    </select>
+
+<!--    查找派单表与订单表的关联-->
+    <select id="selectDeliveryOrderList" parameterType="Map" resultMap="UserOrderTbUserDeliverResult">
+        select a.id, a.type, a.user_id, a.order_id, a.nickname, a.avatar, a.receive_name, a.receive_phone, a.receive_province, a.receive_address, a.delivery_address, a.order_amount, a.tip_fee, a.pay_mode, a.order_detail_name, a.order_remark, a.finished_time, a.appointment_time, a.order_detail_code, a.order_step, a.cancel_remark, a.cancel_time, a.create_time, a.update_time,b.id as sub_id, b.nickname as sub_nickname, b.avatar as sub_avatar, b.order_id as sub_order_id, b.distributor_id as sub_distributor_id, b.distributor_name as sub_distributor_name, b.distributor_phone as sub_distributor_phone, b.cancel_remark as sub_cancel_remark, b.cancel_time as sub_cancel_time, b.order_step as sub_order_step, b.create_time as sub_create_time
+        from tb_user_order a
+        join tb_user_deliver b on b.order_id = a.order_id and b.distributor_id = #{userId}
+       <where>
+            <if test="type != null">
+                and a.type = #{type}
+            </if>
+            <if test="orderStep != null">
+                and b.order_step = #{orderStep}
+            </if>
+       </where>
+        order by b.create_time desc
+    </select>
+    <select id="selectUserOrderById" parameterType="String" resultMap="UserOrderResult">
+        <include refid="selectUserOrderVo"/>
+        where order_id = #{id}
+    </select>
+
+    <select id="selectUserOrder" resultMap="UserOrderResult" parameterType="Map">
+        <include refid="selectUserOrderVo"/>
+        <where>
+            user_id = #{openId}
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="orderStep != null">
+                and order_step = #{orderStep}
+            </if>
+        </where>
+
+    </select>
+    <insert id="insertUserOrder" parameterType="UserOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_user_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null">type,</if>
+            <if test="userId != null and userId != ''">user_id,</if>
+            <if test="orderId != null and orderId != ''">order_id,</if>
+            <if test="nickname != null and nickname != ''">nickname,</if>
+            <if test="avatar != null and avatar != ''">avatar,</if>
+            <if test="receiveName != null and receiveName != ''">receive_name,</if>
+            <if test="receivePhone != null and receivePhone != ''">receive_phone,</if>
+            <if test="receiveProvince != null and receiveProvince != ''">receive_province,</if>
+            <if test="receiveAddress != null and receiveAddress != ''">receive_address,</if>
+            <if test="deliveryAddress != null and deliveryAddress != ''">delivery_address,</if>
+            <if test="orderAmount != null">order_amount,</if>
+            <if test="tipFee != null">tip_fee,</if>
+            <if test="payMode != null">pay_mode,</if>
+            <if test="orderDetailName != null and orderDetailName != ''">order_detail_name,</if>
+            <if test="orderRemark != null">order_remark,</if>
+            <if test="finishedTime != null">finished_time,</if>
+            <if test="appointmentTime != null">appointment_time,</if>
+            <if test="orderDetailCode != null and orderDetailCode != ''">order_detail_code,</if>
+            <if test="orderStep != null">order_step,</if>
+            <if test="cancelRemark != null">cancel_remark,</if>
+            <if test="cancelTime != null">cancel_time,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null">#{type},</if>
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="orderId != null and orderId != ''">#{orderId},</if>
+            <if test="nickname != null and nickname != ''">#{nickname},</if>
+            <if test="avatar != null and avatar != ''">#{avatar},</if>
+            <if test="receiveName != null and receiveName != ''">#{receiveName},</if>
+            <if test="receivePhone != null and receivePhone != ''">#{receivePhone},</if>
+            <if test="receiveProvince != null and receiveProvince != ''">#{receiveProvince},</if>
+            <if test="receiveAddress != null and receiveAddress != ''">#{receiveAddress},</if>
+            <if test="deliveryAddress != null and deliveryAddress != ''">#{deliveryAddress},</if>
+            <if test="orderAmount != null">#{orderAmount},</if>
+            <if test="tipFee != null">#{tipFee},</if>
+            <if test="payMode != null">#{payMode},</if>
+            <if test="orderDetailName != null and orderDetailName != ''">#{orderDetailName},</if>
+            <if test="orderRemark != null">#{orderRemark},</if>
+            <if test="finishedTime != null">#{finishedTime},</if>
+            <if test="appointmentTime != null">#{appointmentTime},</if>
+            <if test="orderDetailCode != null and orderDetailCode != ''">#{orderDetailCode},</if>
+            <if test="orderStep != null">#{orderStep},</if>
+            <if test="cancelRemark != null">#{cancelRemark},</if>
+            <if test="cancelTime != null">#{cancelTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserOrder" parameterType="UserOrder">
+        update tb_user_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null">type = #{type},</if>
+            <if test="nickname != null and nickname != ''">nickname = #{nickname},</if>
+            <if test="avatar != null and avatar != ''">avatar = #{avatar},</if>
+            <if test="receiveName != null and receiveName != ''">receive_name = #{receiveName},</if>
+            <if test="receivePhone != null and receivePhone != ''">receive_phone = #{receivePhone},</if>
+            <if test="receiveProvince != null and receiveProvince != ''">receive_province = #{receiveProvince},</if>
+            <if test="receiveAddress != null and receiveAddress != ''">receive_address = #{receiveAddress},</if>
+            <if test="deliveryAddress != null and deliveryAddress != ''">delivery_address = #{deliveryAddress},</if>
+            <if test="orderAmount != null">order_amount = #{orderAmount},</if>
+            <if test="tipFee != null">tip_fee = #{tipFee},</if>
+            <if test="payMode != null">pay_mode = #{payMode},</if>
+            <if test="orderDetailName != null and orderDetailName != ''">order_detail_name = #{orderDetailName},</if>
+            <if test="orderRemark != null">order_remark = #{orderRemark},</if>
+            <if test="finishedTime != null">finished_time = #{finishedTime},</if>
+            <if test="appointmentTime != null">appointment_time = #{appointmentTime},</if>
+            <if test="orderDetailCode != null and orderDetailCode != ''">order_detail_code = #{orderDetailCode},</if>
+            <if test="orderStep != null">order_step = #{orderStep},</if>
+            <if test="cancelRemark != null">cancel_remark = #{cancelRemark},</if>
+            <if test="cancelTime != null">cancel_time = #{cancelTime},</if>
+        </trim>
+        <where>
+            <if test="orderId != null">
+                and order_id = #{orderId}
+            </if>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+        </where>
+    </update>
+
+    <delete id="deleteUserOrderById" parameterType="Long">
+        delete from tb_user_order where id = #{id}
+    </delete>
+
+    <delete id="deleteUserOrderByIds" parameterType="String">
+        delete from tb_user_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.smart.mapper.UserDeliverMapper">
+    
+    <resultMap type="UserDeliver" id="UserDeliverResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar" />
+        <result property="distributorId"    column="distributor_id"    />
+        <result property="distributorName"    column="distributor_name"    />
+        <result property="distributorPhone"    column="distributor_phone"    />
+        <result property="cancelRemark"    column="cancel_remark"    />
+        <result property="cancelTime"    column="cancel_time"    />
+        <result property="orderStep"    column="order_step"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectUserDeliverVo">
+        select id, order_id,nickname,avatar,distributor_id, distributor_name, distributor_phone, cancel_remark, cancel_time, order_step, create_time from tb_user_deliver
+    </sql>
+
+    <select id="selectUserDeliverList" parameterType="UserDeliver" resultMap="UserDeliverResult">
+        <include refid="selectUserDeliverVo"/>
+        <where>  
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="nickname != null and nickname != ''">and nickname = #{nickname}</if>
+            <if test="avatar != null and avatar != ''">and avatar = #{avatar}</if>
+            <if test="distributorId != null  and distributorId != ''"> and distributor_id = #{distributorId}</if>
+            <if test="distributorName != null  and distributorName != ''"> and distributor_name like concat('%', #{distributorName}, '%')</if>
+            <if test="distributorPhone != null  and distributorPhone != ''"> and distributor_phone = #{distributorPhone}</if>
+            <if test="cancelRemark != null  and cancelRemark != ''"> and cancel_remark = #{cancelRemark}</if>
+            <if test="cancelTime != null "> and cancel_time = #{cancelTime}</if>
+            <if test="orderStep != null "> and order_step = #{orderStep}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserDeliverByOrderId" parameterType="String" resultMap="UserDeliverResult">
+        <include refid="selectUserDeliverVo"/>
+        where order_id = #{orderId}
+    </select>
+        
+    <insert id="insertUserDeliver" parameterType="UserDeliver" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_user_deliver
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">order_id,</if>
+            <if test="nickname != null and nickname != ''">nickname,</if>
+            <if test="avatar != null and avatar != ''">avatar,</if>
+            <if test="distributorId != null and distributorId != ''">distributor_id,</if>
+            <if test="distributorName != null and distributorName != ''">distributor_name,</if>
+            <if test="distributorPhone != null and distributorPhone != ''">distributor_phone,</if>
+            <if test="cancelRemark != null">cancel_remark,</if>
+            <if test="cancelTime != null">cancel_time,</if>
+            <if test="orderStep != null">order_step,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">#{orderId},</if>
+            <if test="nickname != null and nickname != ''">#{nickname},</if>
+            <if test="avatar != null and avatar != ''">#{avatar},</if>
+            <if test="distributorId != null and distributorId != ''">#{distributorId},</if>
+            <if test="distributorName != null and distributorName != ''">#{distributorName},</if>
+            <if test="distributorPhone != null and distributorPhone != ''">#{distributorPhone},</if>
+            <if test="cancelRemark != null">#{cancelRemark},</if>
+            <if test="cancelTime != null">#{cancelTime},</if>
+            <if test="orderStep != null">#{orderStep},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserDeliver" parameterType="UserDeliver">
+        update tb_user_deliver
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nickname != null and nickname != ''">nickname = #{nickname},</if>
+            <if test="avatar != null and avatar != ''">avatar = #{avatar},</if>
+            <if test="distributorId != null and distributorId != ''">distributor_id = #{distributorId},</if>
+            <if test="distributorName != null and distributorName != ''">distributor_name = #{distributorName},</if>
+            <if test="distributorPhone != null and distributorPhone != ''">distributor_phone = #{distributorPhone},</if>
+            <if test="cancelRemark != null">cancel_remark = #{cancelRemark},</if>
+            <if test="cancelTime != null">cancel_time = #{cancelTime},</if>
+            <if test="orderStep != null">order_step = #{orderStep},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        <where>
+            <if test="orderId != null">
+                and order_id = #{orderId}
+            </if>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+        </where>
+    </update>
+
+    <delete id="deleteUserDeliverById" parameterType="Long">
+        delete from tb_user_deliver where id = #{id}
+    </delete>
+
+    <delete id="deleteUserDeliverByIds" parameterType="String">
+        delete from tb_user_deliver where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

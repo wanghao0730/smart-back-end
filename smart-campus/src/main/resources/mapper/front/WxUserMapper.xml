@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.smart.mapper.WxUserMapper">
+    
+    <resultMap type="WxUser" id="WxUserResult">
+        <result property="id"    column="id"    />
+        <result property="openId"    column="open_id"    />
+        <result property="nickname"    column="nickname"    />
+        <result property="name"    column="name"    />
+        <result property="sex"    column="sex"    />
+        <result property="province"    column="province"    />
+        <result property="city"    column="city"    />
+        <result property="district"    column="district"    />
+        <result property="photo"    column="photo"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="isDisable"    column="is_disable"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectWxUserVo">
+        select id, open_id, nickname, name, sex, province, city, district, photo, phone, email, is_disable, create_time, update_time from tb_user
+    </sql>
+
+    <select id="selectWxUserList" parameterType="WxUser" resultMap="WxUserResult">
+        <include refid="selectWxUserVo"/>
+        <where>  
+            <if test="openId != null  and openId != ''"> and open_id = #{openId}</if>
+            <if test="nickname != null  and nickname != ''"> and nickname like concat('%', #{nickname}, '%')</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="district != null  and district != ''"> and district = #{district}</if>
+            <if test="photo != null  and photo != ''"> and photo = #{photo}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="isDisable != null  and isDisable != ''"> and is_disable = #{isDisable}</if>
+        </where>
+    </select>
+    
+    <select id="selectWxUserById" parameterType="Long" resultMap="WxUserResult">
+        <include refid="selectWxUserVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectWxUserByOpenId" parameterType="String" resultMap="WxUserResult">
+        <include refid="selectWxUserVo"></include>
+        where open_id = #{openId}
+    </select>
+
+    <insert id="insertWxUser" parameterType="WxUser" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="openId != null and openId != ''">open_id,</if>
+            <if test="nickname != null">nickname,</if>
+            <if test="name != null">name,</if>
+            <if test="sex != null">sex,</if>
+            <if test="province != null">province,</if>
+            <if test="city != null">city,</if>
+            <if test="district != null">district,</if>
+            <if test="photo != null">photo,</if>
+            <if test="phone != null">phone,</if>
+            <if test="email != null">email,</if>
+            <if test="isDisable != null">is_disable,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openId != null and openId != ''">#{openId},</if>
+            <if test="nickname != null">#{nickname},</if>
+            <if test="name != null">#{name},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="province != null">#{province},</if>
+            <if test="city != null">#{city},</if>
+            <if test="district != null">#{district},</if>
+            <if test="photo != null">#{photo},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="isDisable != null">#{isDisable},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWxUser" parameterType="WxUser">
+        update tb_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="openId != null and openId != ''">open_id = #{openId},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="district != null">district = #{district},</if>
+            <if test="photo != null">photo = #{photo},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="isDisable != null">is_disable = #{isDisable},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWxUserById" parameterType="Long">
+        delete from tb_user where id = #{id}
+    </delete>
+
+    <delete id="deleteWxUserByIds" parameterType="String">
+        delete from tb_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
